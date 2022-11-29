@@ -64,4 +64,21 @@ ch3. 스프링 배치 기초 이해하기
         scope은 항상 빈이어야 한다.
 
     ItemReader interface 구조
+        배치 대상 데이터를 읽기 위한 설정
+            파일, DB, 네트워크 등에서 읽기 위함
+
+        Step에 ItemReader는 필수
+
+        기본 제공되는 ItemReader 구현체
+            file, jdbc, jpa, hibernate, kafka, etc...
+
+        ItemReader 구현체가 없으면 직접 개발
+
+        ItemStream은 ExecutionContext로 read, write 정보를 저장
+
+        ListItemReader 예제
+
+    CSV 파일 데이터 읽기
+        ItemReader 구현체 중 하나인 FlatFileItemReader를 사용해서 파일로 저장된 데이터를 읽어 객체에 매핑
+        로그로 출력해보자
 
