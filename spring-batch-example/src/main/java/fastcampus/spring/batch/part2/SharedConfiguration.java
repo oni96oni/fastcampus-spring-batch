@@ -1,4 +1,4 @@
-package fastcampus.spring.batch.part1;
+package fastcampus.spring.batch.part2;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,22 +8,24 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
 @Slf4j
-@RequiredArgsConstructor
-public class HelloConfiguration {
+@Configuration
+//@RequiredArgsConstructor
+//@ComponentScan(basePackages = "fastcampus.spring.batch.part2")
+public class SharedConfiguration {
 
-    private final JobBuilderFactory jobBuilderFactory;
-    private final StepBuilderFactory stepBuilderFactory;
+    private JobBuilderFactory jobBuilderFactory;
+    private StepBuilderFactory stepBuilderFactory;
 
-
-//    public HelloConfiguration(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
-//        this.jobBuilderFactory = jobBuilderFactory;
-//        this.stepBuilderFactory = stepBuilderFactory;
-//    }
+    public SharedConfiguration(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
+        this.jobBuilderFactory = jobBuilderFactory;
+        this.stepBuilderFactory = stepBuilderFactory;
+    }
 
     @Bean
     public Job helloJob() {
@@ -42,4 +44,5 @@ public class HelloConfiguration {
                 })
                 .build();
     }
+
 }
