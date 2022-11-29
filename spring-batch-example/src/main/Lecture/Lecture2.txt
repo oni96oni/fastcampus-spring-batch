@@ -1,0 +1,67 @@
+ch3. 스프링 배치 기초 이해하기
+    1. Task 기반 배치와 Chunk 기반 배치
+        ★배치를 처리할 수 있는 방법은 2가지
+        1. Task 기반
+            코드 작성 쉬움(배치 처리 과정이 비교적 쉬운 경우 사용)
+            대량 처리를 하는 경우 더 복잡!
+            하나의 큰 덩어리를 여러 덩어리로 나누어 처리하기 부적합
+        2. Chunk 기반
+            ItemReader, ItemProcessor, ItemWriter의 관계 이해 필요
+            대량처리를 하는경우 Task보다 쉽게 구현
+            예를 들어 10,000개의 데이터중 1,000개씩 10개의 덩어리로 수행
+
+        항상 Configuration은 하나켜놔야한다!
+
+        chunk기반 step의 종료 시점은?
+            itemReader에서 null을 리턴할때까지 step은 반복된다!
+
+        reader와 processor는 하나씩 데이터를 처리 하지만 writer는 리스트로 처리한다.
+
+        <INPUT, OUTPUT>chunk(int)
+            reader에서 INPUT 을 return (먼저 읽어들인 다음에, ItemProcessor에게 전달)
+            ItemProcessor에서 OUTPUT을 return (ItemWriter에게 전달, INPUT과 OUTPUT은 같은 타입일수도 아닐수도 있다)
+            ItemWriter에서 OUTPUT을 받아서 처리(WRITE)
+
+        StepExecution은 읽은 Item 크기를 저장할 수 있으니 당연히 조회도 가능하다.
+
+        배치 실행을 더 유연하게 -> spring batch parameter
+
+    JobParameters 이해
+        2가지 방법으로 사용한다.
+        객체를 직접 사용 스프링에서 제공하는 Spring EL 사용
+
+        배치 실행에 필요한 값을 parameter를 통해 외부에서 주입
+
+        JobParameters는 외부에서 주입된 parameter를 관리하는 객체
+
+        String parameter = jobParameters.getString(key, defaultValue);
+        @Value("#{jobParameters[key]}")
+
+    @JobScope와 @StepScope 이해
+        @Scope는 어떤 시점에 bean을 생성/소멸 시킬지 bean의 lifecycle을 설정하는것이다.
+        애플리케이션 시작되는 시점에서 생성 종료되는 시점에 소멸
+
+        @JobScope는 job 실행 시점에 생성 끝나면 소멸
+            Step에 선언
+        @StepScope는 step 실행 시점에 생성 끝나면 소멸
+            Tasklet, Chunk(ItemReader, ItemProcessor, ItemWriter)에 선언(사용가능)
+
+        spring의 @Scope와 같은것
+            @Scope("job")과 @JobScope는 같은것
+            @Scope("step")과 @StepScope는 같은것
+            완벽히 같은것이 아니라 의미가!
+            왜 이런걸로 생명주기를 관리? -> Thread-Safe위해서, spring EL을 위해
+            이 둘이 아니면 spring EL을 사용할 수 없다.
+            왜???
+
+
+        Job과 Step 라이프사이클에 의해 생성되기 때문에 Thread-Safe 하다.
+            왜???
+
+        @Value("#{jobParameters[key]}")를 사용하기 위해 @JobScope와 @StepScope는 필수
+            왜???
+
+        scope은 항상 빈이어야 한다.
+
+    ItemReader interface 구조
+

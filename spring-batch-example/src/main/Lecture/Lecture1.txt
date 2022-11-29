@@ -76,3 +76,15 @@ ch2 스프링 배치 아키텍쳐
     데이터 공유 ExecutionContext 이해
         job과 step사이에서 데이터를 공유하는 예제 만들기
 
+        contribution 객체를 통해서 stepExecution 객체를 꺼낼 수 있고
+        stepExecution 객체를 통해서 ExecutionContext, JobExecution 객체를 꺼낼 수 있다.
+        JobExecution 객체를 통해서 JobInstance 객체를 꺼낼 수 있다.
+        JobExecution 객체를 통해서 jobExecutionContext 객체를 꺼낼 수 있다.
+
+        job_key는 sharestep에서 넣은 job execution context 로그가 찍힐거고
+        step_key는 step 끼리 공유가 되지않는다. 그래서 기본값이 찍힐것이다.
+
+        ★★사용범위에 대한 이해
+        jobExecutionContext는 job이 관리하는 step내에서 어디서든 데이터 공유
+        step은 해당 step에서만 데이터 공유
+
