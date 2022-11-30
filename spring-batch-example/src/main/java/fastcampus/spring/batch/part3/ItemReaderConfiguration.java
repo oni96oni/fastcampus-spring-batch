@@ -58,7 +58,7 @@ public class ItemReaderConfiguration {
     private FlatFileItemReader<Person> csvFileItemReader() throws Exception {
         DefaultLineMapper<Person> lineMapper = new DefaultLineMapper<>();
         DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer();
-        tokenizer.setNames("id", "name", "age", "address"); // Person의 필드명 입력
+        tokenizer.setNames("id", "name", "age", "address"); // Person 객체의 필드명 입력
         lineMapper.setLineTokenizer(tokenizer);
 
         lineMapper.setFieldSetMapper(fieldSet -> {

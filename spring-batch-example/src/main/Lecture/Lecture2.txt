@@ -82,3 +82,21 @@ ch3. 스프링 배치 기초 이해하기
         ItemReader 구현체 중 하나인 FlatFileItemReader를 사용해서 파일로 저장된 데이터를 읽어 객체에 매핑
         로그로 출력해보자
 
+    JDBC 데이터 읽기
+        JDBC로 데이터를 읽을 때는 2가지 방법 존재
+
+        Cursor 기반 조회
+            배치 처리가 완료될 때 까지 DB Connection이 연결
+            DB Connection 빈도가 낮아 성능이 좋은 반면, 긴 Connection 유지 시간 필요
+            하나의 Connection에서 처리되기 때문에, Thread-Safe 하지 않음
+            모든 결과를 메모리에 할당하기 때문에, 더 많은 메모리를 사용
+
+        Paging 기반 조회
+            페이징 단위로 DB Connection을 연결
+            DB Connection 빈도가 높아 비교적 성능이 낮은 반면, 짧은 Connection 유지 시간 필요
+            매번 Connection을 하기 때문에 Thread Safe
+            페이징 단위의 결과만 메모리에 할당하기 때문에, 비교적 더 적은 메모리를 사용
+
+        JdbcCursorItemReader vs JdbcPagingItemReader
+            둘다 JDBC를 실행하기 위한 Datasource 필요
+            조회된 데이터 row를 클래스와 매핑하기 위한 beanMapper, rowMapper 설정 가능
