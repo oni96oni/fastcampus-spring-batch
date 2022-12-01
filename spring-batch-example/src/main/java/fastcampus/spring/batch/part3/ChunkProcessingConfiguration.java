@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.ArrayList;
 import java.util.List;
 
-@Configuration
+//@Configuration
 @Slf4j
 @RequiredArgsConstructor
 public class ChunkProcessingConfiguration {

@@ -100,3 +100,36 @@ ch3. 스프링 배치 기초 이해하기
         JdbcCursorItemReader vs JdbcPagingItemReader
             둘다 JDBC를 실행하기 위한 Datasource 필요
             조회된 데이터 row를 클래스와 매핑하기 위한 beanMapper, rowMapper 설정 가능
+            전자는 sql로 조회 쿼리 설정, 후자는 queryProvider로 조회 쿼리 설정
+            전자는 fetchSize 설정 가능, 후자는 pageSize 설정 가능
+
+        step이 실행될 수 있도록 job에 추가해주어야 한다.
+
+        Cursor와 Paging 차이 이해하고 ItemReader 사용하는것이 중요하다.
+        jdbcPagingItemReader 예제 만들어보기
+
+    JPA 데이터 읽기
+        jdbc와 마찬가지로 cursor와 paging 방식으로 데이터를 읽을 수 있다.
+
+        차이점은 DataSource가 아닌 EntityManagerFactory를 사용한다는 것이다.
+
+        우선 JPA에서 Person 객체를 Entity로 만들어야 한다. -> @Entity 사용
+        @NoArgsConstructor를 사용해서 기본생성자 추가
+
+        jpaPagingItemReader 예제 만들어보기
+
+    ItemWriter interface 구조 이해
+        ItemWriter는 마지막으로 배치 처리 대상 데이터를 어떻게 처리할 지 결정
+        Step에서 ItemWriter는 필수
+        ex) ItemReader에서 읽은 데이터를 DB에 저장, API로 서버에 요청, 파일에 데이터를 write
+        항상 write가 아님
+            데이터를 최종 마무리를 하는것이 ItemWriter
+
+        chunk에서는 itemWriter가 필수!
+
+        ItemWriter는 write 메소드를 가지고 있다. -> parameter는 List<T> items 이다.
+        processor에서 가공한 데이터를 writer에게 넘겨주기때문!
+
+    CSV 파일 데이터 쓰기
+
+
