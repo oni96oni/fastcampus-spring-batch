@@ -131,5 +131,66 @@ ch3. 스프링 배치 기초 이해하기
         processor에서 가공한 데이터를 writer에게 넘겨주기때문!
 
     CSV 파일 데이터 쓰기
+        csv 파일에 데이터 작성을 위해 FlatFileItemWriter를 사용해보자
 
+        Reader에서 생성했던 100개의 test name이 생성된것을 확인할 수 있다.
 
+        헤더 설정
+            headerCallback을 사용해서 헤더를 설정할 수 있다. 문자열사용
+        푸터 설정
+            footerCallback을 사용해서 푸터를 설정할 수 있다. 문자열사용
+
+        append 속성으로 true -> 기존 파일에 덮어 씌우기, false -> 기존 파일을 지우고 재생성
+
+    JDBC 데이터 쓰기
+        JdbcBatchItemWriter를 사용해서 데이터를 DB에 저장해보자
+        단건 처리가 아니기 때문에 비교적 높은 성능!
+            무엇보다 성능이 좋은것? 한번에 하나씩 처리하는것보다
+
+        단건씩 cud하는것이 아니라 bulk로 처리(한방에)
+
+        mysql에서 bulk insert를 사용하기 위해서는
+          jpa:
+            hibernate:
+              ddl-auto: update
+
+              를 지정해주어야 한다. application.yml에 추가해주자
+
+        db에서 select * from person;을 하면 100개의 데이터가 들어간것을 확인할 수 있다.
+            확인할 때 주의! spring_batch schema로 콘솔켜야 확인가능 다른 스키마 들어가면 안된다.
+
+    JPA 데이터 쓰기
+        JpaItemWriter는 JPA entity를 사용해서 데이터를 저장할 수 있다.
+
+        Entity를 하나씩 EntityManager.persist 또는 EntityManager.merge로 insert
+
+        show-sql: true를 설정하면 jpa에서 실행되는 쿼리가 로그로 다 찍히게된다.
+
+        id를 직접 할당하지 않는 이상 usePersist를 true로 설정해야한다.
+            이게 없으면? -> insert로 실행되는데? id를 우리가 직접 정해주는것이 아니니까!
+            반복문 수정한거 참고하기
+
+    ItemProcessor interface구조 이해, 과제 요구사항 설명
+        ItemReader에서 읽은 데이터를 가공 또는 필터링을 한다.
+        ItemProcessor는 ItemReader에서 읽은 데이터를 가공 또는 필터링을 한다.
+            데이터를 가공한다는 뜻은 -> Input을 Output으로 변환한다는 뜻이다.
+            필터링 -> chunk를 최종처리하는 ItemWriter에 데이터를 보낼지말지 결정할 수 있다는 뜻이다.
+                ItemReader에서 null을 리턴하면 -> chunk 처리가 끝났다는 의미
+                ItemProcessor에서 null을 리턴하면 -> ItemWriter에 해당 Item을 처리하지 않겠다라는 뜻이다.
+        Step의 ItemProcessor는 optional
+        ItemProcessor는 필수는 아니지만, 책임을 분리하기 위해 사용
+
+        ItemWriter의 실행 여부를 판단 할 수 있도록 필터링하는 역할을 한다.
+            ItemWriter는 not null만 처리한다.
+
+        chunk에서 ItemWriter는 하나만 사용가능하지만. CompositeItemProcessor를 사용하면 여러개를 사용할 수 있다.
+
+    [과제] CSV 파일 데이터 읽고 MySQL DB에 insert 하기
+        csv 파일 데이터를 읽어 h2 db에 데이터 저장하는 배치 개발
+        Reader : 100개의 person data를 csv 파일에서 읽는다.
+        Processor : allow_duplicate 파라미터로 person.name의 중복 여부 조건을 판단.
+            allow_duplicate가 true면 중복 허용, false면 중복 불가
+                true면 모든 person return
+                false면 중복된 데이터니까 null로 return
+        Writer : 2개의 ItemWriter를 사용해서 Person H2 DB에 저장 후 몇건 저장됐는지 log를 찍는다.
+            Person 저장 ItemWriter와 log 출력 ItemWriter를 CompositeItemWriter를 사용해 하나로 만들것
